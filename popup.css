@@ -1,0 +1,20 @@
+.btn{
+    width: 200px;
+    height: 30px;
+    line-height: 30px;
+    outline: none;
+    border: 0;
+    color: #fff;
+    border-radius: 4px;
+    margin: 10px;
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+}
+.btn-green{
+    background: #43b149;
+}
+.btn-red{
+    background: #F10C10;
+}

@@ -1,0 +1,25 @@
+{
+    "name": "fanli heatmap",
+    "version" : "1.0.0",
+    "manifest_version" : 2,
+    "icons" : {
+        "16" : "icon.png",
+        "30" : "icon.png"
+    },
+    "browser_action" : {
+        "default_title" : "返利热力图",
+        "default_icon" : "icon.png",
+        "default_popup" : "popup.html"
+    },
+    "content_scripts" : [
+        {
+            "matches" : ["http://localhost/Source/faxian/","*://*.fanli.com/*","*://*.baidu.com/*"],
+            "css" : ["custom.css"],
+            "js" : ["heatmap.min.js","custom.js"],
+            "run_at" : "document_idle"
+        }
+    ],
+    "permissions" : [
+        "tabs"
+    ]
+}
