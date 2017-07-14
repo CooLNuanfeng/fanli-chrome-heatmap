@@ -1,3 +1,37 @@
+.panel{
+    width: 200px;
+    margin: 10px;
+}
+.panel span{
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 2px;
+    background: url(icons_bg.png) no-repeat;
+    background-position: 0 0;
+}
+.panel-toggle.active span{
+    background-position: 0 100%;
+}
+.panel-toggle{
+    cursor: pointer;
+}
+.panel-time{
+    display: none;
+}
+.panel-time input{
+    padding: 5px;
+    outline: none;
+    border: 1px solid #ededed;
+    margin-top: 3px;
+}
+.notice{
+    font-size: 12px;
+    color: red;
+    text-align: center;
+    display: none;
+}
 .btn{
     width: 200px;
     height: 30px;

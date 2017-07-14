@@ -1,4 +1,11 @@
 (function(){
+    chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
+        console.log(sendResponse);
+        // if(request.greeting === 'hello'){
+        //     console.log('get in');
+        //     sendResponse({'farewell':'good night'})
+        // }
+    });
     setTimeout(function(){
         var oWarp = document.createElement('div');
         var oContain = document.createElement('div');
@@ -24,7 +31,7 @@
         function getRandom(min, max) {
             return Math.floor(Math.random() * (max - min) + min);
         }
-        for(var i=0; i<100; i++){
+        for(var i=0; i<10; i++){
             data.push({
                 x : getRandom(0,parseInt(bodyStyle.width)),
                 y : getRandom(0,parseInt(bodyStyle.height)),

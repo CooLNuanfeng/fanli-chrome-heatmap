@@ -8,8 +8,17 @@
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <h5>开启/关闭 热力图工具</h5>
-    <button id="btn" class="btn btn-red">关闭</button>
+    <h5>热力图工具面板</h5>
+    <div class="panel">
+        <p class="panel-toggle active"><span></span> 今天 </p>
+        <p class="panel-toggle" data-flag="true"><span></span> 时间区间 </p>
+        <div class="panel-time">
+            <p>开始时间 : <input type="text" id="start" placeholder="20160630"></p>
+            <p>结束时间 : <input type="text" id="end" placeholder="20160630"></p>
+        </div>
+        <div class="notice">请填写时间段</div>
+    </div>
+    <div id="btn" class="btn btn-green">确定</div>
 </body>
 <script src="popup.js"></script>
 </html>
