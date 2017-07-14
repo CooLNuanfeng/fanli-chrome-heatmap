@@ -1,18 +1,22 @@
 (function(){
     chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
-        console.log(sendResponse);
-        // if(request.greeting === 'hello'){
-        //     console.log('get in');
-        //     sendResponse({'farewell':'good night'})
-        // }
+        request.id = sender.id;
+        createHeatmap(request);
     });
-    setTimeout(function(){
-        var oWarp = document.createElement('div');
+    function createHeatmap(dataJson){
+        var oWarp;
         var oContain = document.createElement('div');
         var body = document.body;
         var bodyStyle = getComputedStyle(body);
         var firstDom = body.firstChild;
         var heatmap;
+        if(document.getElementById(dataJson.id)){
+            oWarp = document.getElementById(dataJson.id);
+            oWarp.innerHTML = '';
+        }else{
+            oWarp = document.createElement('div');
+            oWarp.id = dataJson.id;
+        }
 
         oWarp.style.width = bodyStyle.width;
         oWarp.style.height = bodyStyle.height;
@@ -51,5 +55,5 @@
           max: 100,
           data: data
         });
-    },5000);
+    }
 })();
