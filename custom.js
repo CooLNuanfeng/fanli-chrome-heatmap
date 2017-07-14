@@ -19,12 +19,12 @@
         }
 
         oWarp.style.width = bodyStyle.width;
-        oWarp.style.height = bodyStyle.height;
+        oWarp.style.height = bodyStyle.height;  //32767
         oWarp.style.position = 'absolute';
         oWarp.style.top = 0;
         oWarp.style.left = 0;
 
-
+        oContain.style.position = 'relative';
         oContain.style.width = "100%";
         oContain.style.height = "100%";
         oWarp.appendChild(oContain);
@@ -35,7 +35,7 @@
         function getRandom(min, max) {
             return Math.floor(Math.random() * (max - min) + min);
         }
-        for(var i=0; i<10; i++){
+        for(var i=0; i<100; i++){
             data.push({
                 x : getRandom(0,parseInt(bodyStyle.width)),
                 y : getRandom(0,parseInt(bodyStyle.height)),
@@ -44,12 +44,12 @@
         }
         console.log(data,'data');
 
-        oWarp.style.background = 'rgba(0,0,0,.5)';
-        oWarp.style.zIndex = 9999999;
+        oWarp.style.zIndex = 9999;
 
         heatmap = h337.create({
             container: oContain,
-            radius: 60
+            radius: 60,
+            backgroundColor: 'rgba(0,0,0,.5)'
         });
         heatmap.setData({
           max: 100,
