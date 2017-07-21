@@ -13,9 +13,9 @@
     },
     "content_scripts" : [
         {
-            "matches" : ["http://localhost/Source/faxian/","*://*.fanli.com/*","*://*.baidu.com/*"],
+            "matches" : ["*://*.fanli.com/*"],
             "css" : ["custom.css"],
-            "js" : ["heatmap.min.js","custom.js"],
+            "js" : ["jquery.js","heatmap.min.js","custom.js"],
             "run_at" : "document_idle"
         }
     ],

@@ -1,5 +1,6 @@
 (function(){
-    var oBtn = document.getElementById('btn');
+    var mapBtn = document.getElementById('btn-heatmap');
+    var dataBtn = document.getElementById('btn-heatdate');
     var toggleBtns = document.querySelectorAll('.panel-toggle');
     var timeBox = document.querySelector('.panel-time');
     var todayFlag = true;
@@ -25,11 +26,20 @@
 
     });
 
-    oBtn.onclick = function(){
+    dataBtn.onclick = function(){
+        message(2);
+    };
+
+    mapBtn.onclick = function(){
+        message(1);
+    };
+
+    function message(type){
         var sendJson = {
             'flag' : todayFlag,
             'start' : startTime.value,
-            'end' : endTime.value
+            'end' : endTime.value,
+            'type' : type
         };
         if(!todayFlag && (!sendJson.start || !sendJson.end)){
             notice.style.display = 'block';
@@ -40,6 +50,6 @@
                 });
             });
         }
-    };
+    }
 
 })();
