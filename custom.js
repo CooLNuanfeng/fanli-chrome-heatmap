@@ -125,8 +125,14 @@
         oContain.style.position = 'relative';
         oContain.style.width = "100%";
         oContain.style.height = "100%";
+        oWarp.style.zIndex = 9999;
         oWarp.appendChild(oContain);
         body.insertBefore(oWarp,firstDom);
+        heatmap = h337.create({
+            container: oContain,
+            radius: 20,
+            backgroundColor: 'rgba(0,0,0,.5)'
+        });
 
         // var sql = "select top 10 * from dw.dm.incr_d_tra_ubt_coordinate where url = '"+window.location.href+"'";
         // if(!dataJson.flag){
@@ -147,15 +153,10 @@
             console.log(res.data,'res');
             var data = res.data;
             renderData = makerData(data);
-            oWarp.style.zIndex = 9999;
+
             console.log(renderData);
-            heatmap = h337.create({
-                container: oContain,
-                radius: 10,
-                backgroundColor: 'rgba(0,0,0,.5)'
-            });
             heatmap.setData({
-              max: 20,
+              max: 500,
               data: renderData
             });
         }).fail(function(){
