@@ -7,6 +7,7 @@
 
         if(request.type == 2){ //统计数据
             createDataInfo();
+            sendResponse({'response':'ok'})
         }
     });
 
@@ -87,24 +88,15 @@
 
 
     function makerData(data){
-        var result = [],winW = window.innerWidth || document.documentElement.clientWidth || document.body.offsetWidth;
+        var result = [], winW = window.innerWidth || document.documentElement.clientWidth || document.body.offsetWidth;
         $.each(data,function(index,item){
-            var strData = item.coordinate.replace(/}-{/g,'}|{');
-            var arrData = strData.split('|');
-            $.each(arrData,function(i,v){
-                var arr = v.match(/{x:(-?\d+(\.\d+)?),y:(\d+(\.\d+)?),value:(\d+)}/);
-                console.log(arr);
-                if(arr){
-                    var json = {
-                        'x' : Number(arr[1])+Number(winW/2),
-                        'y' : arr[3],
-                        'value' : arr[5]
-                    };
-                    result.push(json);
-                }
-            });
+            var json = {
+                'x' : item.x + winW/2,
+                'y' : item.y,
+                'value' : item.value
+            };
+            result.push(json);
         });
-        console.log(result);
         return result;
     }
 
@@ -136,36 +128,36 @@
         oWarp.appendChild(oContain);
         body.insertBefore(oWarp,firstDom);
 
-        var sql = "select top 10 * from dw.dm.incr_d_tra_ubt_coordinate where url = '"+window.location.href+"'";
-        if(!dataJson.flag){
-            sql += " and ds >='"+dataJson.start+"' and ds < '"+dataJson.end+"'";
-        }
-
+        // var sql = "select top 10 * from dw.dm.incr_d_tra_ubt_coordinate where url = '"+window.location.href+"'";
+        // if(!dataJson.flag){
+        //     sql += " and ds >='"+dataJson.start+"' and ds < '"+dataJson.end+"'";
+        // }
+        //
         var param = {
-            "key" : "QqVE5hzs3IER731kW884",
-            "db" : "sqlserver_dwprd",
-            "sql" : sql,
+            "target_url" : encodeURIComponent(window.location.href),
+            "start_date" : dataJson.start,
+            "end_date" : dataJson.end,
         };
         $.ajax({
-            url : 'http://192.168.3.215:7070/plugin/query.do',
-            type : 'post',
+            url : 'http://ny.fanli.com/reliImgMergData.php',
+            type : 'get',
             data : param,
             dataType : 'json'
         }).done(function(res){
-            if(res.content){
-                renderData = makerData(res.content);
-                oWarp.style.zIndex = 9999;
-
-                heatmap = h337.create({
-                    container: oContain,
-                    radius: 8,
-                    backgroundColor: 'rgba(0,0,0,.5)'
-                });
-                heatmap.setData({
-                  max: 10,
-                  data: renderData
-                });
-            }
+            console.log(res.data,'res');
+            var data = res.data;
+            renderData = makerData(data);
+            oWarp.style.zIndex = 9999;
+            console.log(renderData);
+            heatmap = h337.create({
+                container: oContain,
+                radius: 10,
+                backgroundColor: 'rgba(0,0,0,.5)'
+            });
+            heatmap.setData({
+              max: 20,
+              data: renderData
+            });
         }).fail(function(){
             alert('请求数据失败，请重试');
         });
