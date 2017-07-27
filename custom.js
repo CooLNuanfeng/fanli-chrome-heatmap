@@ -2,17 +2,19 @@
     chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
         request.id = sender.id;
         if(request.type == 1){  //热力图
+            sendResponse({'status': 0});
             createHeatmap(request);
         }
 
         if(request.type == 2){ //统计数据
+            sendResponse({'status': 0});
             createDataInfo();
-            sendResponse({'response':'ok'})
         }
     });
 
 
     function createDataInfo(){
+        // chrome.runtime.sendMessage({'status':1});
         var resultData = [
             {'xpath' : 'html/body/section[2]/div[1]/div[1]/ul[0]/li[1]/a[0]','click': 1256},
             {'xpath' : 'html/body/section[2]/div[1]/div[1]/div[2]/div[0]/div[0]/div[0]/ul[0]/li[6]/a[0]', 'click': 2556},
@@ -159,6 +161,7 @@
               max: 50,
               data: makerData(rdata)
             });
+            chrome.runtime.sendMessage({'status':1});
         }).fail(function(){
             alert('请求数据失败，请重试');
         });

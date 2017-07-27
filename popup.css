@@ -55,3 +55,7 @@
 .btn-blue{
     background: #33CCFF;
 }
+.btn-disable{
+    opacity: .4;
+    cursor: no-drop; 
+}
