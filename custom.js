@@ -87,9 +87,10 @@
 
 
 
-    function makerData(data){
+    function makerData(arr){
         var result = [], winW = window.innerWidth || document.documentElement.clientWidth || document.body.offsetWidth;
-        $.each(data,function(index,item){
+
+        $.each(arr,function(index,item){
             var json = {
                 'x' : item.x + winW/2,
                 'y' : item.y,
@@ -97,12 +98,13 @@
             };
             result.push(json);
         });
+        // console.log(result,'result');
+        result.unshift({x: 0, y: 0, value: 0}); //debug heatmap a strange bug
         return result;
     }
 
     function createHeatmap(dataJson){
         var oWarp;
-        var renderData;
         var oContain = document.createElement('div');
         var body = document.body;
         var bodyStyle = getComputedStyle(body);
@@ -131,6 +133,7 @@
         heatmap = h337.create({
             container: oContain,
             radius: 20,
+            maxOpacity: 0.4,
             backgroundColor: 'rgba(0,0,0,.5)'
         });
 
@@ -150,14 +153,11 @@
             data : param,
             dataType : 'json'
         }).done(function(res){
-            console.log(res.data,'res');
-            var data = res.data;
-            renderData = makerData(data);
-
-            console.log(renderData);
+            var rdata = res.data;
+            // console.log(rdata,'res.data');
             heatmap.setData({
-              max: 500,
-              data: renderData
+              max: 50,
+              data: makerData(rdata)
             });
         }).fail(function(){
             alert('请求数据失败，请重试');
