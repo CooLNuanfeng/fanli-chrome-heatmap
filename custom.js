@@ -36,7 +36,8 @@
                 return;
             }
             resultData = res.data.items;
-            var total = res.data.totalPV;
+            var totalpv = res.data.totalPV;
+            var totaluv = res.data.totalUV;
             var pv = res.data.totalClickPV;
             // console.log(resultData);
             chrome.runtime.sendMessage({'status':1});
@@ -53,7 +54,7 @@
                     w = $dom.outerWidth(),
                     h = $dom.outerHeight();
 
-                $div.html(item.clickpv+' ('+ toDecimal((item.clickpv/total)*100)+'%)').css({
+                $div.html(item.clickpv+' ('+ toDecimal((item.clickpv/pv)*100)+'%)').css({
                     'position' : 'absolute',
                     'top' : t,
                     'left' : l,
@@ -69,11 +70,11 @@
                     'overflow' : 'hidden'
                 });
                 $div.on('mouseenter',function(ev){
-                    $hoverDiv.html('总点击量: '+total+' <br>总浏览量: '+pv+' <br>当前点击数: '+item.clickpv+' <br>占比: '+toDecimal((item.clickpv/total)*100)+'%').css({
+                    $hoverDiv.html('页面访问次数: '+totalpv+' <br>页面访问人数: '+totaluv+' <br>当前点击数: '+item.clickpv+' <br>当前点击人数: '+item.clickuv+' <br>占比: '+toDecimal((item.clickpv/pv)*100)+'%').css({
                         'position' : 'absolute',
                         'top' : t + h,
                         'left' : l,
-                        'width' : w <= 150 ? 150: (w-20),
+                        'width' : w <= 200 ? 200: (w-20),
                         'padding' : 10,
                         'zIndex' : 99999,
                         'color' : '#fff',

@@ -8,13 +8,14 @@
     var endTime = document.getElementById('end');
     var notice = document.querySelector('.notice');
 
-    document.addEventListener('click',function(ev){
-        if(ev.target.className === 'panel-toggle'){
-            for(var i=0; i<toggleBtns.length; i++){
-                toggleBtns[i].classList.remove('active');
+    for(var i=0; i<toggleBtns.length; i++){
+        toggleBtns[i].index = i;
+        toggleBtns[i].onclick = function(){
+            for(var j=0; j<toggleBtns.length; j++){
+                toggleBtns[j].classList.remove('active');
             }
-            ev.target.classList.add('active');
-            if(ev.target.getAttribute('data-flag')){
+            this.classList.add('active');
+            if(this.getAttribute('data-flag')){
                 timeBox.style.display = 'block';
                 todayFlag = false;
             }else{
@@ -23,8 +24,25 @@
                 todayFlag = true;
             }
         }
-
-    });
+    }
+    //
+    // document.addEventListener('click',function(ev){
+    //     if(ev.target.className === 'panel-toggle'){
+    //         for(var i=0; i<toggleBtns.length; i++){
+    //             toggleBtns[i].classList.remove('active');
+    //         }
+    //         ev.target.classList.add('active');
+    //         if(ev.target.getAttribute('data-flag')){
+    //             timeBox.style.display = 'block';
+    //             todayFlag = false;
+    //         }else{
+    //             timeBox.style.display = 'none';
+    //             notice.style.display = 'none';
+    //             todayFlag = true;
+    //         }
+    //     }
+    //
+    // });
 
     dataBtn.onclick = function(){
         if(hasClass(dataBtn,'btn-disable')){
