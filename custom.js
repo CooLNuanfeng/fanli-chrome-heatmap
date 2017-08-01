@@ -1,4 +1,7 @@
 (function(){
+    var proUrl = 'http://research.office.51fanli.com/web/reliImgMergData.php';
+    var devUrl = 'http://research.com/reliImgMergData.php';
+
     chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
         request.id = sender.id;
         if(request.type == 1){  //热力图
@@ -8,79 +11,124 @@
 
         if(request.type == 2){ //统计数据
             sendResponse({'status': 0});
-            createDataInfo();
+            createDataInfo(request);
         }
     });
 
 
-    function createDataInfo(){
-        // chrome.runtime.sendMessage({'status':1});
-        var resultData = [
-            {'xpath' : 'html/body/section[2]/div[1]/div[1]/ul[0]/li[1]/a[0]','click': 1256},
-            {'xpath' : 'html/body/section[2]/div[1]/div[1]/div[2]/div[0]/div[0]/div[0]/ul[0]/li[6]/a[0]', 'click': 2556},
-            {'xpath': 'html/body/section[2]/div[1]/div[1]/div[2]/div[0]/div[0]/div[0]/ul[0]/li[9]/a[0]','click': 1543},
-            {'xpath' : 'html/body/section[2]/div[1]/div[0]/div[1]/a[13]','click' : 15266},
-            {'xpath' : 'html/body/section[2]/div[1]/div[1]/div[2]/div[1]/div[1]/a[0]','click' : 166},
-            {'xpath' : 'html/body/section[2]/div[1]/div[1]/div[2]/div[0]/div[1]/div[1]/a[1]', 'click' : 520}
-        ];
-        var $hoverDiv = $('<div></div>');
-        $.each(resultData,function(index,item){
-            var $dom = getDom(item.xpath),$div = $('<div></div>');
-            var t = $dom.offset().top,
-                l = $dom.offset().left,
-                w = $dom.outerWidth(),
-                h = $dom.outerHeight();
+    function createDataInfo(dataJson){
+        var resultData = null;
 
-            $div.html(item.click).css({
-                'position' : 'absolute',
-                'top' : t,
-                'left' : l,
-                'width' : w,
-                'height' : h,
-                'lineHeight' : h +'px',
-                'textIndent' : '5px',
-                'background' : 'rgba(0,0,0,.7)',
-                'zIndex' : 99999,
-                'color' : '#fff',
-                'fontSize' : 16,
-                'cursor' : 'pointer',
-                'overflow' : 'hidden'
-            });
-            $div.on('mouseenter',function(ev){
-                $hoverDiv.html('总点击量: 12345 <br>总浏览量: 3555 <br>当前点击数: 124 <br>占比: 4%').css({
+        var param = {
+            'target_url' : encodeURIComponent(window.location.href),
+            "type" : 'click',
+            "start_date" : dataJson.start,
+            "end_date" : dataJson.end,
+        };
+        $.ajax({
+            url : proUrl,
+            type : 'get',
+            data : param,
+            dataType : 'json'
+        }).done(function(res){
+            if(!res.data){
+                alert('数据格式不正确');
+                return;
+            }
+            resultData = res.data.items;
+            var total = res.data.totalPV;
+            var pv = res.data.totalClickPV;
+            // console.log(resultData);
+            chrome.runtime.sendMessage({'status':1});
+
+            var $hoverDiv = $('<div></div>');
+            $.each(resultData,function(index,item){
+                // console.log(item.xpath);
+                var $dom = getDom(item.xpath),$div = $('<div data-path="'+item.xpath+'"></div>'); // data-path="'+item.xpath+'"
+                if(!$dom || !$dom.offset()){
+                    return;
+                }
+                var t = $dom.offset().top,
+                    l = $dom.offset().left,
+                    w = $dom.outerWidth(),
+                    h = $dom.outerHeight();
+
+                $div.html(item.clickpv+' ('+ toDecimal((item.clickpv/total)*100)+'%)').css({
                     'position' : 'absolute',
-                    'top' : t + h,
+                    'top' : t,
                     'left' : l,
-                    'width' : w <= 150 ? 150: (w-20),
-                    'padding' : 10,
+                    'width' : w,
+                    'height' : h,
+                    'lineHeight' : h +'px',
+                    'textIndent' : '5px',
+                    'background' : 'rgba(0,0,0,.7)',
                     'zIndex' : 99999,
                     'color' : '#fff',
-                    'fontSize' : 16,
-                    'overflow' : 'hidden',
-                    'background' : 'rgba(0,0,0,.7)'
-                }).show();
-            }).on('mouseleave',function(ev){
+                    'fontSize' : 12,
+                    'cursor' : 'pointer',
+                    'overflow' : 'hidden'
+                });
+                $div.on('mouseenter',function(ev){
+                    $hoverDiv.html('总点击量: '+total+' <br>总浏览量: '+pv+' <br>当前点击数: '+item.clickpv+' <br>占比: '+toDecimal((item.clickpv/total)*100)+'%').css({
+                        'position' : 'absolute',
+                        'top' : t + h,
+                        'left' : l,
+                        'width' : w <= 150 ? 150: (w-20),
+                        'padding' : 10,
+                        'zIndex' : 99999,
+                        'color' : '#fff',
+                        'fontSize' : 16,
+                        'overflow' : 'hidden',
+                        'background' : 'rgba(0,0,0,.7)'
+                    }).show();
+                }).on('mouseleave',function(ev){
+                    $hoverDiv.hide();
+                });
+                $('body').append($div);
+                $('body').append($hoverDiv);
+            });
+            $hoverDiv.on('mouseenter',function(ev){
+                $hoverDiv.show();
+            }).on('mouseleave',function(){
                 $hoverDiv.hide();
             });
-            $('body').append($div);
-            $('body').append($hoverDiv);
+
+        }).fail(function(){
+            alert('请求数据失败，请重试');
         });
-        $hoverDiv.on('mouseenter',function(ev){
-            $hoverDiv.show();
-        }).on('mouseleave',function(){
-            $hoverDiv.hide();
-        });
+
+
     }
 
     function getDom(xPath){
-    	var reg = /(\d+)/g;
-    	var treeDomArr = xPath.match(reg);
-    	var treeLen = treeDomArr.length;
-    	var $dom = $('body');
-    	for(var i=0; i<treeLen; i++){
-    		$dom = $dom.children().eq(treeDomArr[i]);
-    	}
-    	return $dom;
+        if(/^html\/body/.test(xPath)){
+            var reg = /\/([a-z]+)\[(\d+)\]/g;
+        	var tagReg = /[a-z]+/;
+        	var childReg = /\d+/;
+        	var treeDomArr = xPath.match(reg);
+        	var treeLen = treeDomArr.length;
+        	var $dom = $('body');
+        	for(var i=0; i<treeLen; i++){
+        		var tagName = treeDomArr[i].match(tagReg)[0];
+                var childIndex = treeDomArr[i].match(childReg)[0];
+        		if($dom.children().eq(childIndex)[0] && $dom.children().eq(childIndex)[0].tagName.toLowerCase() == tagName){
+        			$dom = $dom.children().eq(childIndex);
+        		}else{
+        			return null;
+        		}
+        	}
+        	return $dom;
+        }else{
+            return null;
+        }
+    }
+    function toDecimal(x) {
+      var f = parseFloat(x);
+      if (isNaN(f)) {
+        return;
+      }
+      f = Math.round(x*1000)/1000;
+      return f;
     }
 
 
@@ -144,19 +192,25 @@
         //     sql += " and ds >='"+dataJson.start+"' and ds < '"+dataJson.end+"'";
         // }
         //
+
         var param = {
             "target_url" : encodeURIComponent(window.location.href),
             "start_date" : dataJson.start,
             "end_date" : dataJson.end,
         };
+
         $.ajax({
-            url : 'http://ny.fanli.com/reliImgMergData.php',
+            url : proUrl,
             type : 'get',
             data : param,
             dataType : 'json'
         }).done(function(res){
             var rdata = res.data;
             // console.log(rdata,'res.data');
+            if(!rdata.length){
+                alert('数据为空');
+                return;
+            }
             heatmap.setData({
               max: 50,
               data: makerData(rdata)

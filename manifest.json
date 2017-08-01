@@ -20,6 +20,6 @@
         }
     ],
     "permissions" : [
-        "tabs"
+        "http://research.com/*","tabs","http://research.office.51fanli.com/*"
     ]
 }
