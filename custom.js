@@ -2,15 +2,36 @@
     var proUrl = 'http://research.office.51fanli.com/web/reliImgMergData.php';
     var devUrl = 'http://research.com/reliImgMergData.php';
 
+    var oWarp; //热力图容器
+    var domDataArr = []; //数据展示记录
+    var $hoverDiv;  //数据展示浮层div
+
     chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){
         request.id = sender.id;
         if(request.type == 1){  //热力图
             sendResponse({'status': 0});
+            if(domDataArr.length){
+                $.each(domDataArr,function(index,item){
+                    item.remove();
+                });
+                domDataArr.length = 0;
+                $hoverDiv = null;
+            }
             createHeatmap(request);
         }
 
         if(request.type == 2){ //统计数据
             sendResponse({'status': 0});
+            if(oWarp){
+                oWarp.innerHTML = '';
+            }
+            if(domDataArr.length){
+                $.each(domDataArr,function(index,item){
+                    item.remove();
+                });
+                domDataArr.length = 0;
+                $hoverDiv = null;
+            }
             createDataInfo(request);
         }
     });
@@ -42,7 +63,7 @@
             // console.log(resultData);
             chrome.runtime.sendMessage({'status':1});
 
-            var $hoverDiv = $('<div></div>');
+            $hoverDiv = $('<div></div>');
             $.each(resultData,function(index,item){
                 // console.log(item.xpath);
                 var $dom = getDom(item.xpath),$div = $('<div data-path="'+item.xpath+'"></div>'); // data-path="'+item.xpath+'"
@@ -87,6 +108,7 @@
                 });
                 $('body').append($div);
                 $('body').append($hoverDiv);
+                domDataArr.push($div);
             });
             $hoverDiv.on('mouseenter',function(ev){
                 $hoverDiv.show();
@@ -155,7 +177,6 @@
     }
 
     function createHeatmap(dataJson){
-        var oWarp;
         var oContain = document.createElement('div');
         var body = document.body;
         var bodyStyle = getComputedStyle(body);
@@ -217,6 +238,7 @@
               data: makerData(rdata)
             });
             chrome.runtime.sendMessage({'status':1});
+            return oWarp;
         }).fail(function(){
             alert('请求数据失败，请重试');
         });
