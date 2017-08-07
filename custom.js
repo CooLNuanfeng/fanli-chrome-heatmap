@@ -23,7 +23,7 @@
         if(request.type == 2){ //统计数据
             sendResponse({'status': 0});
             if(oWarp){
-                oWarp.innerHTML = '';
+                $(oWarp).remove();
             }
             if(domDataArr.length){
                 $.each(domDataArr,function(index,item){
@@ -67,6 +67,7 @@
             $.each(resultData,function(index,item){
                 // console.log(item.xpath);
                 var $dom = getDom(item.xpath),$div = $('<div data-path="'+item.xpath+'"></div>'); // data-path="'+item.xpath+'"
+                domDataArr.push($div);
                 if(!$dom || !$dom.offset()){
                     return;
                 }
@@ -108,7 +109,7 @@
                 });
                 $('body').append($div);
                 $('body').append($hoverDiv);
-                domDataArr.push($div);
+
             });
             $hoverDiv.on('mouseenter',function(ev){
                 $hoverDiv.show();
